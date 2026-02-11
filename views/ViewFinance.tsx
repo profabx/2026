@@ -337,7 +337,7 @@ const ViewFinance: React.FC = () => {
                         onClick={handleManualAdd}
                         className="w-full lg:w-auto px-4 py-2 bg-white border border-slate-200 hover:border-primary hover:text-primary text-slate-600 text-sm font-bold rounded-lg transition-colors shadow-sm"
                     >
-                        添加记录
+                        增加无票费用
                     </button>
                 </div>
             </div>
