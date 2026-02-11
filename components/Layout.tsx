@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ChatBot from './ChatBot';
 import { AppView } from '../types';
 
@@ -24,6 +24,48 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
 
     // Right-side ProFabX-bot collapse state
     const [isChatCollapsed, setIsChatCollapsed] = useState(false);
+    const [chatWidth, setChatWidth] = useState(360);
+    const [isResizing, setIsResizing] = useState(false);
+
+    const sidebarRef = useRef<HTMLDivElement | null>(null);
+    const startXRef = useRef(0);
+    const startWidthRef = useRef(360);
+
+    useEffect(() => {
+        if (!isResizing) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!sidebarRef.current) return;
+            const deltaX = startXRef.current - e.clientX;
+            let newWidth = startWidthRef.current + deltaX;
+
+            const MIN_WIDTH = 260;
+            const MAX_WIDTH = 520;
+            if (newWidth < MIN_WIDTH) newWidth = MIN_WIDTH;
+            if (newWidth > MAX_WIDTH) newWidth = MAX_WIDTH;
+
+            setChatWidth(newWidth);
+        };
+
+        const handleMouseUp = () => {
+            setIsResizing(false);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing]);
+
+    const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!sidebarRef.current || isChatCollapsed) return;
+        startXRef.current = e.clientX;
+        startWidthRef.current = sidebarRef.current.offsetWidth || chatWidth;
+        setIsResizing(true);
+    };
 
     return (
         <div className="flex h-screen w-full bg-white overflow-hidden flex-col font-body">
@@ -83,12 +125,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
                     </div>
                 </main>
                 
-                {/* Right Sidebar (Global Chat: ProFabX-bot) - Collapsible */}
+                {/* Right Sidebar (Global Chat: ProFabX-bot) - Collapsible & Resizable */}
                 {showGlobalChat && (
                     <div
+                        ref={sidebarRef}
                         className={`relative h-full hidden xl:flex flex-col border-l border-slate-200 bg-white shadow-[0_0_15px_rgba(0,0,0,0.03)] z-20 transition-all duration-300 ${
-                            isChatCollapsed ? 'w-12' : 'w-[360px]'
+                            isChatCollapsed ? 'w-12' : ''
                         }`}
+                        style={!isChatCollapsed ? { width: chatWidth, cursor: isResizing ? 'col-resize' as const : 'default' } : undefined}
                     >
                         {isChatCollapsed ? (
                             <button
@@ -101,6 +145,11 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
                             </button>
                         ) : (
                             <>
+                                {/* Drag handle for resizing width */}
+                                <div
+                                    onMouseDown={handleResizeStart}
+                                    className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize z-30 hover:bg-blue-100/40"
+                                />
                                 <button
                                     onClick={() => setIsChatCollapsed(true)}
                                     className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-12 rounded-l-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-400 hover:text-primary hover:bg-blue-50"
