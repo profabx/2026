@@ -20,7 +20,7 @@ export const generateResponse = async (
         responseText = "已为您生成风险-优化映射视图。您可以直观地看到每个潜在加工风险对应的 AI 解决方案。";
         type = 'analysis';
     } else if (context === 'WIKI' && message.includes('审核')) {
-        responseText = "主管您好，我是 ProFabX-wikibot。关于您刚查看的“五轴热补偿”修订，我已识别出潜在的技术敏感词。";
+        responseText = "主管您好，我是 ProFabX-bot。关于您刚查看的“五轴热补偿”修订，我已识别出潜在的技术敏感词。";
     }
 
     return {

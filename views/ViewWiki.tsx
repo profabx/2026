@@ -116,11 +116,11 @@ const ViewWiki: React.FC = () => {
     // UI State
     const [activeNav, setActiveNav] = useState('5-axis');
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(['cmf', 'cmf-m', 'subtractive', 'additive', 'equal', 'inspection', 'manual']));
-    
+    const [isBotCollapsed, setIsBotCollapsed] = useState(false);
     // Chat & Update State
     const [chatInput, setChatInput] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: '1', role: 'model', text: '主管您好，我是 ProFabX-wikibot。您可以发送“目录名 + 链接”来快速导入并生成文档内容。' }
+        { id: '1', role: 'model', text: '主管您好，我是 ProFabX-bot。您可以发送“目录名 + 链接”来快速导入并生成文档内容。' }
     ]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -671,7 +671,7 @@ const ViewWiki: React.FC = () => {
                             <span className="material-symbols-outlined text-white text-xl">smart_toy</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-slate-900 leading-tight">ProFabX-wikibot</h3>
+                            <h3 className="font-bold text-slate-900 leading-tight">ProFabX-bot</h3>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">在线</span>
