@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ChatBot from './ChatBot';
 import { AppView } from '../types';
 
@@ -21,6 +21,9 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
     // Only show the global generic chatbot on non-Wiki views.
     // The Wiki view has its own integrated specialized sidebar.
     const showGlobalChat = currentView !== AppView.WIKI;
+
+    // Right-side ProFabX-bot collapse state
+    const [isChatCollapsed, setIsChatCollapsed] = useState(false);
 
     return (
         <div className="flex h-screen w-full bg-white overflow-hidden flex-col font-body">
@@ -80,10 +83,34 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
                     </div>
                 </main>
                 
-                {/* Right Sidebar (Global Chat) - Conditional */}
+                {/* Right Sidebar (Global Chat: ProFabX-bot) - Collapsible */}
                 {showGlobalChat && (
-                    <div className="w-[360px] border-l border-slate-200 bg-white h-full hidden xl:flex flex-col shadow-[0_0_15px_rgba(0,0,0,0.03)] z-20">
-                        <ChatBot currentView={currentView} onChangeView={onChangeView} />
+                    <div
+                        className={`relative h-full hidden xl:flex flex-col border-l border-slate-200 bg-white shadow-[0_0_15px_rgba(0,0,0,0.03)] z-20 transition-all duration-300 ${
+                            isChatCollapsed ? 'w-12' : 'w-[360px]'
+                        }`}
+                    >
+                        {isChatCollapsed ? (
+                            <button
+                                onClick={() => setIsChatCollapsed(false)}
+                                className="flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50"
+                                title="展开 ProFabX-bot"
+                            >
+                                <span className="material-symbols-outlined text-xl mb-1">smart_toy</span>
+                                <span className="text-[10px] font-bold [writing-mode:vertical-rl]">ProFabX-bot</span>
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => setIsChatCollapsed(true)}
+                                    className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-12 rounded-l-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-400 hover:text-primary hover:bg-blue-50"
+                                    title="折叠 ProFabX-bot"
+                                >
+                                    <span className="material-symbols-outlined text-base">chevron_right</span>
+                                </button>
+                                <ChatBot currentView={currentView} onChangeView={onChangeView} />
+                            </>
+                        )}
                     </div>
                 )}
             </div>
